@@ -13,6 +13,31 @@ mongoose.connect('mongodb://localhost:27017/foodapp', { useNewUrlParser: true })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.log("Error: Unable to connect to MongoDB", err));
 
+
+//Create Menu schema
+const menuSchema = new mongoose.Schema({
+    itemName:{
+        type:String,
+        minlength:3,
+        maxlength:120
+    },
+    price:Number,
+    rating:{
+        type:Number,
+        min:1,
+        max:5
+    },
+    image:String,
+    description: {
+        type: String,
+        minlength: 8,
+        maxlength: 225
+    },
+})
+
+// Create a model from the Schema (Menu is a model (Class))
+const Menu = mongoose.model('Menu', menuSchema);
+
 // Create Restaurant Schema
 const restaurantSchema = new mongoose.Schema({
     restaurantName: {
@@ -27,23 +52,22 @@ const restaurantSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
-        minlength: 4,
-        maxlength: 60
+        minlength: 8,
+        maxlength: 225
     },
     place:{
         type: String,
         required: true,
     },
     rating: {
-        type: String,
+        type: Number,
         required: true,
-        minlength: 5,
-        maxlength: 60
+        min:1,
+        max:5
     },
     category:[String],
     image:String,
-    menu:[Object]
+    menu:[menuSchema]
 });
 
 // Create a model from the Schema (Restaurant is a model (Class))
@@ -70,7 +94,7 @@ async function getAllRestaurant() {
  */
 async function getRestaurantById(id) {
     try {
-        const restaurant = await Course.findById(id);
+        const restaurant = await Restaurant.findById(id);
         return restaurant;
     }
     catch (err) {
